@@ -27,5 +27,5 @@ def get_info(SAMPLE_IMAGE):
 def band_wavelength_convert(band):
 	return band*8
 
-def band_wavelength_convert(band):
-	return round(band/8,0)
+def wavelength_band_convert(band):
+	return int(round(band/8,0))

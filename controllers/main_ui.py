@@ -11,10 +11,11 @@ import threading
 from PyQt5 import QtCore, QtGui, QtWidgets
 from spectral import (settings, open_image, view_cube, imshow)
 from controllers.tools import (get_info,band_wavelength_convert)
-from controllers.ui_controls import (show_sample_info, set_bands_sliders,
-	get_sliders_values, set_up_initial_values, set_2d_canvas,
-	set_wavelenth_sliders,enable_disabled_controls,)
+from controllers.ui_controls import (show_sample_info,
+	set_up_initial_values, set_2d_canvas, enable_disabled_controls,)
 from controllers.variables import (TRUE_COLOR,)
+from controllers.sliders import (set_sliders,  get_sliders_values, set_rgb_text_values)
+from controllers.bands import (get_bands,)
 
 settings.WX_GL_DEPTH_SIZE = 16
 
@@ -22,9 +23,10 @@ settings.WX_GL_DEPTH_SIZE = 16
 def load_sample(self):
 	# Cargar datos del Hipercubo
 	self.sample_image = open_image(self.sample_path)
-	set_bands_sliders(self, TRUE_COLOR)
 	metadata_info = get_info(self.sample_image)
 	show_sample_info(self, metadata_info)
+	set_sliders(self, TRUE_COLOR)
+	self.rgb_bands = TRUE_COLOR
 	set_2d_canvas(self)
 	self.enable = True
 	enable_disabled_controls(self)
@@ -54,19 +56,14 @@ def render_hypercube(self):
 	view_cube(self.sample_image)
 
 def slider_rgb(self):
-	# Almacenar valores de los sliders y graficar imágen del hipercubo en 2D
-	self.rgb_bands = get_sliders_values(self)
-	self.rgb_wavelength = get_sliders_values(self)
+	# Graficar hipercubo en 2D
+	get_bands(self)
+	set_sliders(self)
 	set_2d_canvas(self)
 
 def change_rgb_values(self):
 	# Setear texbox con los valores de los sliders
-	rgb = get_bands_sliders(self)
-	if not self.combo_bands_flag:
-		rgb = tuple(map(band_wavelength_convert, rgb))
-	self.red_text_box.setText(str(rgb[0]))
-	self.green_text_box.setText(str(rgb[1]))
-	self.blue_text_box.setText(str(rgb[2]))
+	set_rgb_text_values(self, get_sliders_values(self))
 
 def lasso_selector_actived(self):
 	# Uso del Lasso selector de Matplotlib
@@ -75,21 +72,9 @@ def lasso_selector_actived(self):
 def combo_mode_activaded(self, text):
 	# Activar el modo Bands/Wavelength
 	self.combo_bands_flag = False
-
 	if text == 'Bandas':
 		self.combo_bands_flag = True
-
-	if self.combo_bands_flag:
-		self.mode_title.setText('Número de Bandas:')
-		if self.sample_image:
-			self.nbands.setText(str(self.sample_image.nbands))
-		set_bands_sliders(self)
-	else:
-		self.mode_title.setText('Longitud de Onda:')
-		if self.sample_image:
-			wave_range = str(self.sample_image.metadata['wavelength'][0] + '-' + self.sample_image.metadata['wavelength'][-1] + ' (nm)')
-			self.nbands.setText(wave_range)
-		set_wavelenth_sliders(self)
+	set_sliders(self)
 
 def load_test(self):
 	# Cargar ´hipercubo de prueba
