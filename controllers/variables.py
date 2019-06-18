@@ -1,0 +1,4 @@
+
+global TRUE_COLOR
+
+TRUE_COLOR = (80,69,57)
