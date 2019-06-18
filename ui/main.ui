@@ -59,9 +59,9 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QPushButton" name="button_capture">
+       <widget class="QPushButton" name="button_fast_test">
         <property name="text">
-         <string>Capturar</string>
+         <string>Fast Test</string>
         </property>
        </widget>
       </item>
@@ -340,7 +340,7 @@
        <string>Azul</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="red_band">
+     <widget class="QLineEdit" name="red_text_box">
       <property name="geometry">
        <rect>
         <x>240</x>
@@ -350,7 +350,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QLineEdit" name="green_band">
+     <widget class="QLineEdit" name="green_text_box">
       <property name="geometry">
        <rect>
         <x>240</x>
@@ -360,7 +360,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QLineEdit" name="blue_band">
+     <widget class="QLineEdit" name="blue_text_box">
       <property name="geometry">
        <rect>
         <x>240</x>

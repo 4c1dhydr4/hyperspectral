@@ -1,5 +1,3 @@
-
-
 def get_info(SAMPLE_IMAGE):
 	info = ''
 	m = SAMPLE_IMAGE.metadata
@@ -25,7 +23,6 @@ def get_info(SAMPLE_IMAGE):
 	if 'reflectance scale factor'in m:
 		info = info + 'Factor de Escala de Reflectancia: ' +  m['reflectance scale factor'] + '\n'
 	return info
-
 
 def band_wavelength_convert(band):
 	return band*8

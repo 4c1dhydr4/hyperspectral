@@ -35,9 +35,9 @@ class Ui_MainWindow(object):
 		self.button_new_sample = QtWidgets.QPushButton(self.gridLayoutWidget)
 		self.button_new_sample.setObjectName("button_new_sample")
 		self.gridLayout.addWidget(self.button_new_sample, 1, 0, 1, 1)
-		self.button_capture = QtWidgets.QPushButton(self.gridLayoutWidget)
-		self.button_capture.setObjectName("button_capture")
-		self.gridLayout.addWidget(self.button_capture, 2, 0, 1, 1)
+		self.button_fast_test = QtWidgets.QPushButton(self.gridLayoutWidget)
+		self.button_fast_test.setObjectName("button_fast_test")
+		self.gridLayout.addWidget(self.button_fast_test, 2, 0, 1, 1)
 		self.gridLayoutWidget_2 = QtWidgets.QWidget(self.groupBox)
 		self.gridLayoutWidget_2.setGeometry(QtCore.QRect(150, 20, 131, 101))
 		self.gridLayoutWidget_2.setObjectName("gridLayoutWidget_2")
@@ -122,15 +122,15 @@ class Ui_MainWindow(object):
 		self.label_4 = QtWidgets.QLabel(self.tab_6)
 		self.label_4.setGeometry(QtCore.QRect(130, 210, 31, 16))
 		self.label_4.setObjectName("label_4")
-		self.red_band = QtWidgets.QLineEdit(self.tab_6)
-		self.red_band.setGeometry(QtCore.QRect(240, 90, 31, 20))
-		self.red_band.setObjectName("red_band")
-		self.green_band = QtWidgets.QLineEdit(self.tab_6)
-		self.green_band.setGeometry(QtCore.QRect(240, 150, 31, 20))
-		self.green_band.setObjectName("green_band")
-		self.blue_band = QtWidgets.QLineEdit(self.tab_6)
-		self.blue_band.setGeometry(QtCore.QRect(240, 210, 31, 20))
-		self.blue_band.setObjectName("blue_band")
+		self.red_text_box = QtWidgets.QLineEdit(self.tab_6)
+		self.red_text_box.setGeometry(QtCore.QRect(240, 90, 31, 20))
+		self.red_text_box.setObjectName("red_text_box")
+		self.green_text_box = QtWidgets.QLineEdit(self.tab_6)
+		self.green_text_box.setGeometry(QtCore.QRect(240, 150, 31, 20))
+		self.green_text_box.setObjectName("green_text_box")
+		self.blue_text_box = QtWidgets.QLineEdit(self.tab_6)
+		self.blue_text_box.setGeometry(QtCore.QRect(240, 210, 31, 20))
+		self.blue_text_box.setObjectName("blue_text_box")
 		self.mode_title = QtWidgets.QLabel(self.tab_6)
 		self.mode_title.setGeometry(QtCore.QRect(10, 50, 161, 31))
 		font = QtGui.QFont()
@@ -204,7 +204,7 @@ class Ui_MainWindow(object):
 		self.groupBox.setTitle(_translate("MainWindow", "Opciones"))
 		self.button_open_sample.setText(_translate("MainWindow", "Abrir Muestra"))
 		self.button_new_sample.setText(_translate("MainWindow", "Nueva Muestra"))
-		self.button_capture.setText(_translate("MainWindow", "Capturar"))
+		self.button_fast_test.setText(_translate("MainWindow", "Fast Test"))
 		self.button_print.setText(_translate("MainWindow", "Imprimir"))
 		self.button_save_sample.setText(_translate("MainWindow", "Guardar Muestra"))
 		self.button_configuration.setText(_translate("MainWindow", "Configuración"))
@@ -231,6 +231,9 @@ class Ui_MainWindow(object):
 		self.menuEdici_n.setTitle(_translate("MainWindow", "Edición"))
 		self.menuAyuda.setTitle(_translate("MainWindow", "Ayuda"))
 
+	def _load_test(self):
+		load_test(self)
+
 	def _render_sample(self):
 		render_sample(self)     
 
@@ -255,3 +258,4 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
 	main_ui(Ui_MainWindow())
+
