@@ -12,7 +12,7 @@ def enable_disabled_controls(self):
 		self.button_3d_hypercube.setEnabled(True)
 		self.button_pixel_analityc.setEnabled(True)
 		self.lasso_button.setEnabled(True)
-		self.rectangle_button.setEnabled(True)
+		self.graph_profile_button.setEnabled(True)
 	else:
 		self.combo_mode.setEnabled(False)
 		self.slider_red_band.setEnabled(False)
@@ -21,7 +21,8 @@ def enable_disabled_controls(self):
 		self.button_3d_hypercube.setEnabled(False)
 		self.button_pixel_analityc.setEnabled(False)
 		self.lasso_button.setEnabled(False)
-		self.rectangle_button.setEnabled(False)
+		self.export_roi_button.setEnabled(False)
+		self.graph_profile_button.setEnabled(False)
 
 def combo_mode_def_items(self):
 	# Seteo de Combo de Modo Bands/Wavelength

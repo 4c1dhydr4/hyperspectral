@@ -7,6 +7,7 @@ from matplotlib.widgets import LassoSelector, Cursor
 from matplotlib.path import Path
 from matplotlib import patches as patches
 from spectral import *
+from controllers.roi import verts_normalization, get_points, get_pixel_list
 import random
 
 class graph_2d_view(QWidget):
@@ -14,29 +15,33 @@ class graph_2d_view(QWidget):
 	def __init__(self, parent = None):
 
 		QWidget.__init__(self, parent)
-		self.figure_2d = Figure()
+		self.figure_2d = Figure(frameon=False)
 		self.canvas = FigureCanvas(self.figure_2d)
 		vertical_layout = QVBoxLayout()
 		vertical_layout.addWidget(self.canvas)
-		self.canvas.axes = self.figure_2d.add_subplot(111)
+		self.canvas.axes = self.figure_2d.add_axes([0, 0, 1, 1])
 		self.toolbar = NavigationToolbar(self.canvas, self)
 		self.setLayout(vertical_layout)
 		self.canvas.axes.clear()
+		self.canvas.axes.set_axis_off()
 		self.canvas.draw()
 		self.layout().addWidget(self.toolbar)
 
 	def onselect(self, verts):
-		path = Path(verts)
+		self.verts = verts_normalization(verts)
+		path = Path(self.verts)
 		self.patch = patches.PathPatch(path, facecolor='red', lw=1)
 		self.patch.set_alpha(0.5)
+		points = get_points(self.shape)
+		grid = self.patch.contains_points(points, radius=1e-9)
+		self.lasso_plane_list = get_pixel_list(grid)
 		self.canvas.axes.add_patch(self.patch)
-		# plt.show()
-		# self.contains_points = path.contains_points(self.rgb)
-		# self.show_sample(self.rgb, (0,0,0))
 		self.figure_2d.canvas.draw_idle()
 
 	def select_lasso_area(self):
-		self.lasso = LassoSelector(self.canvas.axes, self.onselect)
+		self.lasso_plane_list = list()
+		lasso_props = {'color':'red','linewidth':0.5,'alpha':1}
+		self.lasso = LassoSelector(self.canvas.axes, self.onselect, lineprops=lasso_props)
 		self.cursor = Cursor(self.canvas.axes, 
 			useblit=False, color='red', linewidth=0.5)
 		# plt.show()
@@ -65,7 +70,11 @@ class graph_2d_view(QWidget):
 			if k in kwargs:
 				rgb_kwargs[k] = kwargs.pop(k)
 
-		imshow_kwargs = {'cmap': 'gray'}
+		imshow_kwargs = {
+			'cmap': 'gray',
+			'origin': 'upper',
+			'aspect': 'equal',
+		}
 		imshow_kwargs.update(kwargs)
 
 		self.rgb = get_rgb(data, bands, **rgb_kwargs)
@@ -81,5 +90,6 @@ class graph_2d_view(QWidget):
 		# ax = plt.imshow(self.rgb, **imshow_kwargs)
 		self.canvas.axes.clear()
 		self.canvas.axes.imshow(self.rgb, **imshow_kwargs)
+		self.canvas.axes.set_axis_off()
 		self.canvas.draw()
 		self.canvas.show()

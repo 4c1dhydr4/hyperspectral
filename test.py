@@ -16,7 +16,7 @@ from spectral import *
 
 PROJ_DIR = os.getcwd()
 SAMPLES_DIR = os.path.join(PROJ_DIR, 'samples')
-sample = SAMPLES_DIR + '\\HARC000.bil.hdr'
+sample = 'D:\\Hypercubes\\HARC000.bil.hdr'
 
 image = open_image(sample) #.load()
 bands = (70,70,30)

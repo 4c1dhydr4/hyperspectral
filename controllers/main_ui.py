@@ -16,9 +16,11 @@ from controllers.ui_controls import (show_sample_info,
 from controllers.variables import (TRUE_COLOR,)
 from controllers.sliders import (set_sliders,  get_sliders_values, set_rgb_text_values)
 from controllers.bands import (get_bands,)
+from controllers.roi import load_roi_data
 
 settings.WX_GL_DEPTH_SIZE = 16
 
+SAMPLE_PATH = ''
 
 def load_sample(self):
 	# Cargar datos del Hipercubo
@@ -39,6 +41,8 @@ def render_sample(self, test=False):
 			"","HSI Data (*.hdr)"
 		)
 	if self.sample_path:
+		global SAMPLE_PATH
+		SAMPLE_PATH = self.sample_path
 		threading.Thread(target=load_sample(self)).start()
 
 def spectral_imshow():
@@ -66,8 +70,17 @@ def change_rgb_values(self):
 	set_rgb_text_values(self, get_sliders_values(self))
 
 def lasso_selector_actived(self):
-	# Uso del Lasso selector de Matplotlib
+	# Uso del Lasso selector de Matplotlib para seleccionar pixeles
+	self.graph_2d_view.shape = self.sample_image.shape
 	self.graph_2d_view.select_lasso_area()
+	self.export_roi_button.setEnabled(True)	
+
+def roi_save(self):
+	# Callback para guardar la información en txt de los pixeles seleccionados
+	load_roi_data(
+		plane_list= self.graph_2d_view.lasso_plane_list, 
+		shape=self.graph_2d_view.shape
+	)
 
 def combo_mode_activaded(self, text):
 	# Activar el modo Bands/Wavelength
@@ -98,6 +111,7 @@ def setupUi_definitions(self):
 	self.slider_blue_band.valueChanged.connect(self._change_rgb_values)
 	self.lasso_button.clicked.connect(self._lasso_selector_actived)
 	self.combo_mode.activated[str].connect(self._combo_mode_activaded)     
+	self.export_roi_button.clicked.connect(self._roi_save)
 
 def main_ui(Ui_MainWindow):
 	# Definición principal del software
