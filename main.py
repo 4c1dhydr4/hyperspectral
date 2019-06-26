@@ -9,10 +9,11 @@ from spectral import *
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
 	def setupUi(self, MainWindow):
 		MainWindow.setObjectName("MainWindow")
-		MainWindow.resize(937, 748)
+		MainWindow.resize(1028, 794)
 		self.centralwidget = QtWidgets.QWidget(MainWindow)
 		self.centralwidget.setObjectName("centralwidget")
 		self.gridLayout_4 = QtWidgets.QGridLayout(self.centralwidget)
@@ -160,23 +161,23 @@ class Ui_MainWindow(object):
 		self.verticalLayout_2.addLayout(self.horizontalLayout_11)
 		spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
 		self.verticalLayout_2.addItem(spacerItem5)
-		self.gridLayout_4.addLayout(self.verticalLayout_2, 0, 1, 4, 1)
-		self.graph_2d_view = graph_2d_view(self.centralwidget)
-		self.graph_2d_view.setMinimumSize(QtCore.QSize(500, 500))
-		self.graph_2d_view.setMaximumSize(QtCore.QSize(1200, 1200))
-		self.graph_2d_view.setObjectName("graph_2d_view")
-		self.gridLayout_4.addWidget(self.graph_2d_view, 2, 0, 1, 1)
 		self.verticalLayout_9 = QtWidgets.QVBoxLayout()
 		self.verticalLayout_9.setObjectName("verticalLayout_9")
 		self.label_6 = QtWidgets.QLabel(self.centralwidget)
 		self.label_6.setObjectName("label_6")
 		self.verticalLayout_9.addWidget(self.label_6)
 		self.graph_plot_view = graph_plot_view(self.centralwidget)
-		self.graph_plot_view.setMinimumSize(QtCore.QSize(0, 200))
-		self.graph_plot_view.setMaximumSize(QtCore.QSize(700, 200))
+		self.graph_plot_view.setMinimumSize(QtCore.QSize(500, 400))
+		self.graph_plot_view.setMaximumSize(QtCore.QSize(700, 400))
 		self.graph_plot_view.setObjectName("graph_plot_view")
 		self.verticalLayout_9.addWidget(self.graph_plot_view)
-		self.gridLayout_4.addLayout(self.verticalLayout_9, 5, 1, 1, 1)
+		self.verticalLayout_2.addLayout(self.verticalLayout_9)
+		self.gridLayout_4.addLayout(self.verticalLayout_2, 0, 1, 4, 1)
+		self.graph_2d_view = graph_2d_view(self.centralwidget)
+		self.graph_2d_view.setMinimumSize(QtCore.QSize(500, 500))
+		self.graph_2d_view.setMaximumSize(QtCore.QSize(1200, 1200))
+		self.graph_2d_view.setObjectName("graph_2d_view")
+		self.gridLayout_4.addWidget(self.graph_2d_view, 2, 0, 1, 1)
 		self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
 		self.horizontalLayout_8.setObjectName("horizontalLayout_8")
 		self.export_roi_button = QtWidgets.QPushButton(self.centralwidget)
@@ -191,7 +192,7 @@ class Ui_MainWindow(object):
 		self.statusbar.setObjectName("statusbar")
 		MainWindow.setStatusBar(self.statusbar)
 		self.menubar = QtWidgets.QMenuBar(MainWindow)
-		self.menubar.setGeometry(QtCore.QRect(0, 0, 937, 21))
+		self.menubar.setGeometry(QtCore.QRect(0, 0, 1028, 21))
 		self.menubar.setObjectName("menubar")
 		self.menuArchivo = QtWidgets.QMenu(self.menubar)
 		self.menuArchivo.setObjectName("menuArchivo")
@@ -258,8 +259,9 @@ class Ui_MainWindow(object):
 	def _roi_save(self):
 		roi_save(self)
 
+	def _graph_spectra(self):
+		graph_spectra(self)
+
 
 if __name__ == "__main__":
 	main_ui(Ui_MainWindow())
-
-

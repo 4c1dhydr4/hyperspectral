@@ -17,4 +17,5 @@ class graph_plot_view(QWidget):
 		self.canvas.axes = self.figure_2d.add_subplot(111)
 		self.setLayout(vertical_layout)
 		self.canvas.axes.clear()
+		self.canvas.axes.grid(True)
 		self.canvas.draw()

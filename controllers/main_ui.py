@@ -16,7 +16,7 @@ from controllers.ui_controls import (show_sample_info,
 from controllers.variables import (TRUE_COLOR,)
 from controllers.sliders import (set_sliders,  get_sliders_values, set_rgb_text_values)
 from controllers.bands import (get_bands,)
-from controllers.roi import load_roi_data
+from controllers.roi import load_roi_data, plot_spectra, plane_to_matrix_inds
 
 settings.WX_GL_DEPTH_SIZE = 16
 
@@ -73,13 +73,27 @@ def lasso_selector_actived(self):
 	# Uso del Lasso selector de Matplotlib para seleccionar pixeles
 	self.graph_2d_view.shape = self.sample_image.shape
 	self.graph_2d_view.select_lasso_area()
-	self.export_roi_button.setEnabled(True)	
+	self.export_roi_button.setEnabled(True)
+	self.graph_profile_button.setEnabled(True)
 
 def roi_save(self):
 	# Callback para guardar la información en txt de los pixeles seleccionados
 	load_roi_data(
-		plane_list= self.graph_2d_view.lasso_plane_list, 
-		shape=self.graph_2d_view.shape
+		image=self.sample_image,
+		plane_list=self.graph_2d_view.lasso_plane_list, 
+		shape=self.graph_2d_view.shape,
+		canvas=self.graph_plot_view.canvas,
+	)
+
+def graph_spectra(self):
+	pixel_list = plane_to_matrix_inds(
+		self.graph_2d_view.lasso_plane_list, 
+		self.graph_2d_view.shape,
+	)
+	plot_spectra(
+		self.sample_image, 
+		pixel_list,
+		self.graph_plot_view.canvas
 	)
 
 def combo_mode_activaded(self, text):
@@ -112,6 +126,7 @@ def setupUi_definitions(self):
 	self.lasso_button.clicked.connect(self._lasso_selector_actived)
 	self.combo_mode.activated[str].connect(self._combo_mode_activaded)     
 	self.export_roi_button.clicked.connect(self._roi_save)
+	self.graph_profile_button.clicked.connect(self._graph_spectra)
 
 def main_ui(Ui_MainWindow):
 	# Definición principal del software

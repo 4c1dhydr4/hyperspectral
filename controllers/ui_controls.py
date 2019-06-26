@@ -12,7 +12,6 @@ def enable_disabled_controls(self):
 		self.button_3d_hypercube.setEnabled(True)
 		self.button_pixel_analityc.setEnabled(True)
 		self.lasso_button.setEnabled(True)
-		self.graph_profile_button.setEnabled(True)
 	else:
 		self.combo_mode.setEnabled(False)
 		self.slider_red_band.setEnabled(False)
