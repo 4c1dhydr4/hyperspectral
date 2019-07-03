@@ -1,5 +1,23 @@
+"""
+	Tratado de ROIs con Pyqt5, Matplotlib y Numpy:
+	Autor: Luis Quiroz Burga
+"""
 import math
 from numpy import mean
+
+class ROI():
+	def __init__(self, mean_list, max_list, min_list, 
+		plane_list, pixel_list, shape, name):
+		self.mean_list = mean_list
+		self.max_list = max_list
+		self.min_list = min_list
+		self.plane_list = plane_list
+		self.pixel_list = pixel_list
+		self.shape = shape
+		self.name = name
+
+	def __str__(self):
+		return 'ROI: {}'.format(str(self.name))
 
 def verts_normalization(verts):
 	# Normalizo los vertices a flotantes sin decimales.
@@ -41,7 +59,7 @@ def write_in_file(file, pixel):
 		file.write(str(round(data,3)) + '\t')
 	file.write('\n')
 
-def get_x_y1_y2_list(pixel, max_list, min_list):
+def get_y1_y2_list(pixel, max_list, min_list):
 	ind = 0
 	for data in pixel:
 		try:
@@ -56,17 +74,21 @@ def get_x_y1_y2_list(pixel, max_list, min_list):
 			min_list.append(data)
 		ind = ind + 1
 
+def get_ranges_data(pixel_list, image):
+	max_list, min_list = [], []
+	for px in pixel_list:
+		pixel = image.read_pixel(px[1], px[0])
+		get_y1_y2_list(pixel, max_list, min_list)
+	mean_list = []
+	for dx in range(len(max_list)):
+		mean_list.append(mean((min_list[dx],max_list[dx])))
+	return max_list, min_list, mean_list
+
 def plot_spectra(image, pixel_list, canvas):
 	canvas.axes.clear()
 	canvas.axes.grid(True)
 	profiles = list()
-	max_list, min_list = [], []
-	for px in pixel_list:
-		pixel = image.read_pixel(px[1], px[0])
-		get_x_y1_y2_list(pixel, max_list, min_list)
-	mean_list = []
-	for dx in range(len(max_list)):
-		mean_list.append(mean((min_list[dx],max_list[dx])))
+	max_list, min_list, mean_list = get_ranges_data(pixel_list, image)
 	canvas.axes.fill_between(range(len(mean_list)), max_list, min_list,
                      color='r', alpha=.5)
 	canvas.axes.plot(mean_list, 'r')
@@ -75,11 +97,25 @@ def plot_spectra(image, pixel_list, canvas):
 	canvas.show()
 	canvas.draw()
 
-def load_roi_data(image, plane_list, shape, canvas):
+def save_roi_to_list(image, name, plane_list, shape, roi_list):
+	pixel_list = plane_to_matrix_inds(plane_list, shape)
+	max_list, min_list, mean_list = get_ranges_data(pixel_list, image)
+	roi = ROI(plane_list=plane_list, shape=shape, pixel_list=pixel_list,
+		max_list=max_list, min_list=min_list, mean_list=mean_list,
+		name=name)
+
+	Aqui me quedé
+
+	roi_list.append(roi)
+
+def save_roi_data(image, plane_list, shape, canvas, roi_list):
 	pixel_list = plane_to_matrix_inds(plane_list, shape)
 	file = open('test.txt','w')
+	print(shape[2])
+	for ind in range(1,shape[2]+1):
+		file.write(str(ind) + '\t')
+	file.write('\n')
 	for px in pixel_list:
-		file.write(str(px[0])+ '\t' + str(px[1]) + '\t')
 		pixel = image.read_pixel(px[0],px[1])
 		write_in_file(file, pixel)
 	file.close()

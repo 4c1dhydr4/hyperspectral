@@ -1,3 +1,4 @@
+# Autor: Luis Quiroz Burga
 from controllers.variables import (TRUE_COLOR,)
 from controllers.sliders import (sliders_def, get_sliders_values)
 from controllers.bands import get_bands
@@ -22,6 +23,7 @@ def enable_disabled_controls(self):
 		self.lasso_button.setEnabled(False)
 		self.export_roi_button.setEnabled(False)
 		self.graph_profile_button.setEnabled(False)
+		self.add_roi_button.setEnabled(False)
 
 def combo_mode_def_items(self):
 	# Seteo de Combo de Modo Bands/Wavelength
@@ -45,6 +47,7 @@ def set_up_initial_values(self):
 	self.enable = False
 	self.rgb_bands  = (0,0,0)
 	self.rgb_wavelength = (0,0,0)
+	self.roi_list = []
 	enable_disabled_controls(self)
 	sliders_def(self)
 	combo_mode_def_items(self)
