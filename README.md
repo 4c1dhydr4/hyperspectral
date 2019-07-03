@@ -12,5 +12,5 @@ Además, THZ Ai procesa cualquier tipo de hipercubo:
 Proyecto realizado con motivo de investigación científica en el campo de agro-ingeniería de la Universidad Privada del Norte
 
 ### Autores:
-  -Luis Quiroz Burga
-  -Wilson Castro Silupu
+  - Luis Quiroz Burga
+  - Wilson Castro Silupu
