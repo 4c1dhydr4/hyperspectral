@@ -1,4 +1,5 @@
 import math
+from numpy import mean
 
 def verts_normalization(verts):
 	# Normalizo los vertices a flotantes sin decimales.
@@ -40,15 +41,35 @@ def write_in_file(file, pixel):
 		file.write(str(round(data,3)) + '\t')
 	file.write('\n')
 
-import statistics as st
+def get_x_y1_y2_list(pixel, max_list, min_list):
+	ind = 0
+	for data in pixel:
+		try:
+			if data>=max_list[ind]:
+				max_list[ind] = data
+		except Exception as e:
+			max_list.append(data)
+		try:
+			if data<=min_list[ind]:
+				min_list[ind] = data
+		except Exception as e:
+			min_list.append(data)
+		ind = ind + 1
+
 def plot_spectra(image, pixel_list, canvas):
 	canvas.axes.clear()
 	canvas.axes.grid(True)
 	profiles = list()
+	max_list, min_list = [], []
 	for px in pixel_list:
-		# profiles.append(image.read_pixel(px[0],px[1]))
-		# canvas.axes.plot(profiles)
-		canvas.axes.plot(image.read_pixel(px[0],px[1]))
+		pixel = image.read_pixel(px[1], px[0])
+		get_x_y1_y2_list(pixel, max_list, min_list)
+	mean_list = []
+	for dx in range(len(max_list)):
+		mean_list.append(mean((min_list[dx],max_list[dx])))
+	canvas.axes.fill_between(range(len(mean_list)), max_list, min_list,
+                     color='r', alpha=.5)
+	canvas.axes.plot(mean_list, 'r')
 	canvas.axes.set_xlabel('Bandas')
 	canvas.axes.set_ylabel('Intensidad')
 	canvas.show()
