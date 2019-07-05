@@ -17,14 +17,23 @@ from controllers.variables import (TRUE_COLOR,)
 from controllers.sliders import (set_sliders,  get_sliders_values, set_rgb_text_values)
 from controllers.bands import (get_bands,)
 from controllers.roi import (save_roi_data, plot_spectra, plane_to_matrix_inds,
-	save_roi_to_list)
+	save_roi_to_list, ploting_rois, save_and_graph_roi_mean)
 
 settings.WX_GL_DEPTH_SIZE = 16
 
 SAMPLE_PATH = ''
 
+def clean_ui(self):
+	self.roi_list = []
+	self.rois_tree_widget.clear()
+	self.roi_list_number = 0
+	self.rgb_bands = (0,0,0)
+	self.enable = False
+	set_up_initial_values(self)
+
 def load_sample(self):
 	# Cargar datos del Hipercubo
+	clean_ui(self)
 	self.sample_image = open_image(self.sample_path)
 	metadata_info = get_info(self.sample_image)
 	show_sample_info(self, metadata_info)
@@ -79,37 +88,21 @@ def lasso_selector_actived(self):
 	self.add_roi_button.setEnabled(True)
 
 def roi_export(self):
-	# Callback para guardar la información en txt de los pixeles seleccionados
-	save_roi_data(
-		image=self.sample_image,
-		plane_list=self.graph_2d_view.lasso_plane_list, 
-		shape=self.graph_2d_view.shape,
-		canvas=self.graph_plot_view.canvas,
-		roi_list=self.roi_list
-	)
+	# Callback para guardar la información en txt de las ROIS
+	save_roi_data(image=self.sample_image,roi_list=self.roi_list)
+
+def graph_spectra(self):
+	ploting_rois(
+		self.rois_tree_widget, 
+		self.roi_list,
+		self.sample_image,
+		self.graph_plot_view.canvas)
 
 def add_roi_to_list(self):
 	text, okPressed = QtWidgets.QInputDialog.getText(None, 
 		"ROI","Nombre de la ROI:", QtWidgets.QLineEdit.Normal, "")
 	if okPressed and text != '':
-		save_roi_to_list(
-			image=self.sample_image,
-			name=text,
-			plane_list=self.graph_2d_view.lasso_plane_list, 
-			shape=self.graph_2d_view.shape,
-			roi_list=self.roi_list,
-		)
-
-def graph_spectra(self):
-	pixel_list = plane_to_matrix_inds(
-		self.graph_2d_view.lasso_plane_list, 
-		self.graph_2d_view.shape,
-	)
-	plot_spectra(
-		self.sample_image, 
-		pixel_list,
-		self.graph_plot_view.canvas
-	)
+		save_and_graph_roi_mean(self, text)
 
 def combo_mode_activaded(self, text):
 	# Activar el modo Bands/Wavelength

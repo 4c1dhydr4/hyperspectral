@@ -19,3 +19,7 @@ class graph_plot_view(QWidget):
 		self.canvas.axes.clear()
 		self.canvas.axes.grid(True)
 		self.canvas.draw()
+
+	def clear_axes(self):
+		self.canvas.axes.clear()
+		self.canvas.draw()

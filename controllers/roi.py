@@ -4,10 +4,13 @@
 """
 import math
 from numpy import mean
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtWidgets import QMessageBox, QFileDialog, QTreeWidgetItem
+from controllers.tools import show_message
 
 class ROI():
 	def __init__(self, mean_list, max_list, min_list, 
-		plane_list, pixel_list, shape, name):
+		plane_list, pixel_list, shape, name, id, color):
 		self.mean_list = mean_list
 		self.max_list = max_list
 		self.min_list = min_list
@@ -15,9 +18,21 @@ class ROI():
 		self.pixel_list = pixel_list
 		self.shape = shape
 		self.name = name
+		self.id = id
+		self.color = color
 
 	def __str__(self):
 		return 'ROI: {}'.format(str(self.name))
+
+def verify_roi_name(name, roi_list):
+	# Verifica si el nombre del ROI existe en la lista
+	for roi in roi_list:
+		if name == roi.name:
+			show_message(icon=QMessageBox.Warning, title="Error en nueva ROI", 
+				text="Existe una ROI con el nombre {}".format(name), 
+				info="Por favor vuelva a guardar la ROI con un nombre diferente")
+			return False
+	return True
 
 def verts_normalization(verts):
 	# Normalizo los vertices a flotantes sin decimales.
@@ -48,6 +63,7 @@ def get_pixel_list(grid):
 	return pixel_list
 
 def plane_to_matrix_inds(plane_list, shape):
+	# Puntos planos a matriz de coordenadas seleccionadas
 	pixel_list = list()
 	points = get_points(shape)
 	for pixel in plane_list:
@@ -55,11 +71,13 @@ def plane_to_matrix_inds(plane_list, shape):
 	return pixel_list
 
 def write_in_file(file, pixel):
+	# Escribe en el archivo
 	for data in pixel:
 		file.write(str(round(data,3)) + '\t')
 	file.write('\n')
 
 def get_y1_y2_list(pixel, max_list, min_list):
+	# Obtener la lista de máximos y mínimos para gráfica
 	ind = 0
 	for data in pixel:
 		try:
@@ -75,6 +93,7 @@ def get_y1_y2_list(pixel, max_list, min_list):
 		ind = ind + 1
 
 def get_ranges_data(pixel_list, image):
+	# Obtengo los rangos de la gráfica: máximos, mínimos y medios
 	max_list, min_list = [], []
 	for px in pixel_list:
 		pixel = image.read_pixel(px[1], px[0])
@@ -84,38 +103,83 @@ def get_ranges_data(pixel_list, image):
 		mean_list.append(mean((min_list[dx],max_list[dx])))
 	return max_list, min_list, mean_list
 
-def plot_spectra(image, pixel_list, canvas):
-	canvas.axes.clear()
+def plot_spectra(image, roi, canvas):
+	# Plotea los datos en el Canvas
 	canvas.axes.grid(True)
-	profiles = list()
-	max_list, min_list, mean_list = get_ranges_data(pixel_list, image)
-	canvas.axes.fill_between(range(len(mean_list)), max_list, min_list,
-                     color='r', alpha=.5)
-	canvas.axes.plot(mean_list, 'r')
+	canvas.axes.fill_between(range(len(roi.mean_list)), roi.max_list, roi.min_list,
+                     color=roi.color, alpha=.5)
+	canvas.axes.plot(roi.mean_list, color=roi.color, label=roi.name)
 	canvas.axes.set_xlabel('Bandas')
 	canvas.axes.set_ylabel('Intensidad')
+	canvas.axes.legend()
 	canvas.show()
 	canvas.draw()
 
-def save_roi_to_list(image, name, plane_list, shape, roi_list):
+def refresh_roi_to_tree(roi_list, RT):
+	RT.clear()
+	for roi in roi_list:
+		R = QTreeWidgetItem(RT,[roi.name, str(roi.id)])
+		R.setCheckState(0, QtCore.Qt.Checked)
+		R.setBackground(2,QtGui.QBrush(QtGui.QColor(roi.color)))
+		r = QTreeWidgetItem(R,['Bandas', str(roi.shape[2])])
+		r = QTreeWidgetItem(R,['Píxeles', str(len(roi.pixel_list))])
+		r = QTreeWidgetItem(R,['Color', str(roi.color)])
+
+def save_roi_to_list(image, name, plane_list, shape, roi_list, roi_tree, id, color):
 	pixel_list = plane_to_matrix_inds(plane_list, shape)
 	max_list, min_list, mean_list = get_ranges_data(pixel_list, image)
 	roi = ROI(plane_list=plane_list, shape=shape, pixel_list=pixel_list,
 		max_list=max_list, min_list=min_list, mean_list=mean_list,
-		name=name)
-
-	Aqui me quedé
-
+		name=name, id=id, color=color)
 	roi_list.append(roi)
+	refresh_roi_to_tree(roi_list, roi_tree)
 
-def save_roi_data(image, plane_list, shape, canvas, roi_list):
-	pixel_list = plane_to_matrix_inds(plane_list, shape)
-	file = open('test.txt','w')
-	print(shape[2])
-	for ind in range(1,shape[2]+1):
+def save_roi_file(path, roi, image):
+	file = open(path + '/' + roi.name + '.roi.txt','w')
+	for ind in range(1, roi.shape[2]+1):
 		file.write(str(ind) + '\t')
 	file.write('\n')
-	for px in pixel_list:
-		pixel = image.read_pixel(px[0],px[1])
+	for px in roi.pixel_list:
+		pixel = image.read_pixel(px[1],px[0])
 		write_in_file(file, pixel)
 	file.close()
+
+def save_roi_data(image, roi_list):
+	path = QFileDialog.getExistingDirectory(None, "Seleccione el folder destino", "")
+	if path:
+		for roi in roi_list:
+			save_roi_file(path, roi, image)
+		show_message(icon=QMessageBox.Information, title="Guardado con éxito", 
+			text="Las regiones de interés fueron guardadas con éxito", info=""
+		)
+	
+def get_roi_by_item_list(roi_list, text):
+	for roi in roi_list:
+		if roi.name == text:
+			return roi
+
+def ploting_rois(rois_tree, roi_list, image, canvas):
+	canvas.axes.clear()
+	for index in range(rois_tree.topLevelItemCount()):
+		top_item = rois_tree.topLevelItem(index)
+		if top_item.checkState(0) == 2:
+			roi = get_roi_by_item_list(roi_list, top_item.text(0))
+			plot_spectra(image, roi, canvas)
+
+def save_and_graph_roi_mean(self, text):
+	if verify_roi_name(text, self.roi_list):
+		self.roi_list_number = self.roi_list_number + 1
+		save_roi_to_list(
+			image=self.sample_image,
+			name=text,
+			plane_list=self.graph_2d_view.lasso_plane_list, 
+			shape=self.graph_2d_view.shape,
+			roi_list=self.roi_list,
+			roi_tree=self.rois_tree_widget,
+			id=self.roi_list_number,
+			color=self.graph_2d_view.actual_color,
+		)
+		ploting_rois(
+			self.rois_tree_widget, self.roi_list,
+			self.sample_image,self.graph_plot_view.canvas
+		)

@@ -75,9 +75,9 @@ def set_sliders(self, values=False):
 			meta = self.sample_image.metadata['wavelength']
 			mode_text = str(meta[0] + '-' + meta[-1] + ' (nm)')
 		set_single_step_sliders(self, 32)
-
 	if values:
 		set_rgb_text_values(self, values)
+		set_values_sliders(self, values)
 
 	self.nbands.setText(mode_text)
 	set_trick_interval(self, interval)

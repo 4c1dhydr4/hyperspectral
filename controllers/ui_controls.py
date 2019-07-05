@@ -47,7 +47,13 @@ def set_up_initial_values(self):
 	self.enable = False
 	self.rgb_bands  = (0,0,0)
 	self.rgb_wavelength = (0,0,0)
+	self.graph_2d_view.clear_axes()
+	self.graph_plot_view.clear_axes()
+	self.text_browser_info.clear()
 	self.roi_list = []
+	self.roi_list_number = 0
+	self.rois_tree_widget.setHeaderLabels(['Nombre','ID','Color'])
+	self.rois_tree_widget.setAlternatingRowColors(True)
 	enable_disabled_controls(self)
 	sliders_def(self)
 	combo_mode_def_items(self)

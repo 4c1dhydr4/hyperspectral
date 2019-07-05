@@ -8,6 +8,7 @@ from matplotlib.path import Path
 from matplotlib import patches as patches
 from spectral import *
 from controllers.roi import verts_normalization, get_points, get_pixel_list
+from controllers.tools import get_rand_color
 import random
 
 class graph_2d_view(QWidget):
@@ -30,7 +31,8 @@ class graph_2d_view(QWidget):
 	def onselect(self, verts):
 		self.verts = verts_normalization(verts)
 		path = Path(self.verts)
-		self.patch = patches.PathPatch(path, facecolor='red', lw=1)
+		self.actual_color = get_rand_color()
+		self.patch = patches.PathPatch(path, facecolor=self.actual_color, lw=1,)
 		self.patch.set_alpha(0.5)
 		points = get_points(self.shape)
 		grid = self.patch.contains_points(points, radius=1e-9)
