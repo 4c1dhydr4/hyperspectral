@@ -7,6 +7,7 @@ from numpy import mean
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QMessageBox, QFileDialog, QTreeWidgetItem
 from controllers.tools import show_message
+from controllers.ui_controls import reset_canvas
 
 class ROI():
 	def __init__(self, mean_list, max_list, min_list, 
@@ -118,12 +119,11 @@ def plot_spectra(image, roi, canvas):
 def refresh_roi_to_tree(roi_list, RT):
 	RT.clear()
 	for roi in roi_list:
-		R = QTreeWidgetItem(RT,[roi.name, str(roi.id)])
+		R = QTreeWidgetItem(RT,[roi.name,None, str(roi.id)])
 		R.setCheckState(0, QtCore.Qt.Checked)
-		R.setBackground(2,QtGui.QBrush(QtGui.QColor(roi.color)))
+		R.setBackground(1,QtGui.QBrush(QtGui.QColor(roi.color)))
 		r = QTreeWidgetItem(R,['Bandas', str(roi.shape[2])])
 		r = QTreeWidgetItem(R,['Píxeles', str(len(roi.pixel_list))])
-		r = QTreeWidgetItem(R,['Color', str(roi.color)])
 
 def save_roi_to_list(image, name, plane_list, shape, roi_list, roi_tree, id, color):
 	pixel_list = plane_to_matrix_inds(plane_list, shape)
@@ -159,7 +159,11 @@ def get_roi_by_item_list(roi_list, text):
 			return roi
 
 def ploting_rois(rois_tree, roi_list, image, canvas):
-	canvas.axes.clear()
+	reset_canvas(canvas)
+	if rois_tree.topLevelItemCount() == 0:
+		show_message(icon=QMessageBox.Warning, title="Regiones de Interés Vacías", 
+			text="Guarde y seleccione las Regiones de Interés que desee graficar.", info=""
+		)
 	for index in range(rois_tree.topLevelItemCount()):
 		top_item = rois_tree.topLevelItem(index)
 		if top_item.checkState(0) == 2:

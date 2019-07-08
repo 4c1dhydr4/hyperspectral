@@ -30,6 +30,13 @@ def combo_mode_def_items(self):
 	self.combo_mode.addItem("Bandas")
 	self.combo_mode.addItem("Wavelength")
 
+def reset_canvas(canvas):
+	canvas.axes.clear()
+	# canvas.axes.legend()
+	canvas.axes.grid(True)
+	canvas.show()
+	canvas.draw()
+
 def show_sample_info(self, metadata_info):
 	# Mostrar Información de la cabecera
 	self.text_browser_info.clear()
@@ -52,7 +59,7 @@ def set_up_initial_values(self):
 	self.text_browser_info.clear()
 	self.roi_list = []
 	self.roi_list_number = 0
-	self.rois_tree_widget.setHeaderLabels(['Nombre','ID','Color'])
+	self.rois_tree_widget.setHeaderLabels(['Nombre','Color','ID'])
 	self.rois_tree_widget.setAlternatingRowColors(True)
 	enable_disabled_controls(self)
 	sliders_def(self)
