@@ -6,7 +6,7 @@ import math
 from numpy import mean
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QMessageBox, QFileDialog, QTreeWidgetItem
-from controllers.tools import show_message
+from controllers.tools import show_message, to_int
 from controllers.ui_controls import reset_canvas
 
 class ROI():
@@ -93,24 +93,24 @@ def get_y1_y2_list(pixel, max_list, min_list):
 			min_list.append(data)
 		ind = ind + 1
 
-def get_ranges_data(pixel_list, image):
+def get_ranges_data(pixel_list, image, scale_factor):
 	# Obtengo los rangos de la gráfica: máximos, mínimos y medios
 	max_list, min_list = [], []
 	for px in pixel_list:
-		pixel = image.read_pixel(px[1], px[0])
+		pixel = image.read_pixel(px[1], px[0])*scale_factor
 		get_y1_y2_list(pixel, max_list, min_list)
 	mean_list = []
 	for dx in range(len(max_list)):
 		mean_list.append(mean((min_list[dx],max_list[dx])))
 	return max_list, min_list, mean_list
 
-def plot_spectra(image, roi, canvas):
+def plot_spectra(image, roi, canvas, waves):
 	# Plotea los datos en el Canvas
 	canvas.axes.grid(True)
-	canvas.axes.fill_between(range(len(roi.mean_list)), roi.max_list, roi.min_list,
+	canvas.axes.fill_between(waves, roi.max_list, roi.min_list,
                      color=roi.color, alpha=.5)
-	canvas.axes.plot(roi.mean_list, color=roi.color, label=roi.name)
-	canvas.axes.set_xlabel('Bandas')
+	canvas.axes.plot(waves, roi.mean_list, color=roi.color, label=roi.name)
+	canvas.axes.set_xlabel('Wavelength (nm)')
 	canvas.axes.set_ylabel('Intensidad')
 	canvas.axes.legend()
 	canvas.show()
@@ -125,30 +125,31 @@ def refresh_roi_to_tree(roi_list, RT):
 		r = QTreeWidgetItem(R,['Bandas', str(roi.shape[2])])
 		r = QTreeWidgetItem(R,['Píxeles', str(len(roi.pixel_list))])
 
-def save_roi_to_list(image, name, plane_list, shape, roi_list, roi_tree, id, color):
+def save_roi_to_list(image, name, plane_list, shape, roi_list, roi_tree, id, color, scale_factor):
 	pixel_list = plane_to_matrix_inds(plane_list, shape)
-	max_list, min_list, mean_list = get_ranges_data(pixel_list, image)
+	max_list, min_list, mean_list = get_ranges_data(pixel_list, image, scale_factor)
 	roi = ROI(plane_list=plane_list, shape=shape, pixel_list=pixel_list,
 		max_list=max_list, min_list=min_list, mean_list=mean_list,
 		name=name, id=id, color=color)
 	roi_list.append(roi)
 	refresh_roi_to_tree(roi_list, roi_tree)
 
-def save_roi_file(path, roi, image):
+def save_roi_file(path, roi, image, scale_factor):
 	file = open(path + '/' + roi.name + '.roi.txt','w')
 	for ind in range(1, roi.shape[2]+1):
 		file.write(str(ind) + '\t')
 	file.write('\n')
 	for px in roi.pixel_list:
-		pixel = image.read_pixel(px[1],px[0])
+		pixel = image.read_pixel(px[1],px[0])*scale_factor
+		pixel = to_int(pixel)
 		write_in_file(file, pixel)
 	file.close()
 
-def save_roi_data(image, roi_list):
+def save_roi_data(image, roi_list, scale_factor):
 	path = QFileDialog.getExistingDirectory(None, "Seleccione el folder destino", "")
 	if path:
 		for roi in roi_list:
-			save_roi_file(path, roi, image)
+			save_roi_file(path, roi, image, scale_factor)
 		show_message(icon=QMessageBox.Information, title="Guardado con éxito", 
 			text="Las regiones de interés fueron guardadas con éxito", info=""
 		)
@@ -158,21 +159,28 @@ def get_roi_by_item_list(roi_list, text):
 		if roi.name == text:
 			return roi
 
-def ploting_rois(rois_tree, roi_list, image, canvas):
+def ploting_rois(rois_tree, roi_list, image, canvas, waves):
 	reset_canvas(canvas)
 	if rois_tree.topLevelItemCount() == 0:
 		show_message(icon=QMessageBox.Warning, title="Regiones de Interés Vacías", 
-			text="Guarde y seleccione las Regiones de Interés que desee graficar.", info=""
-		)
+					text="Guarde y seleccione las Regiones de Interés que desee graficar.", info="")
 	for index in range(rois_tree.topLevelItemCount()):
 		top_item = rois_tree.topLevelItem(index)
 		if top_item.checkState(0) == 2:
 			roi = get_roi_by_item_list(roi_list, top_item.text(0))
-			plot_spectra(image, roi, canvas)
+			plot_spectra(image, roi, canvas, waves)
+
+def tag_roi(graph_2d_view, text):
+	tag_coords = graph_2d_view.tag_coords
+	graph_2d_view.canvas.axes.annotate(text,
+	    xy=(tag_coords[0], tag_coords[1]),
+	    color='w',fontsize=9)
+	graph_2d_view.canvas.draw_idle()
 
 def save_and_graph_roi_mean(self, text):
 	if verify_roi_name(text, self.roi_list):
 		self.roi_list_number = self.roi_list_number + 1
+		tag_roi(self.graph_2d_view, text)
 		save_roi_to_list(
 			image=self.sample_image,
 			name=text,
@@ -182,8 +190,10 @@ def save_and_graph_roi_mean(self, text):
 			roi_tree=self.rois_tree_widget,
 			id=self.roi_list_number,
 			color=self.graph_2d_view.actual_color,
+			scale_factor=self.scale_factor
 		)
 		ploting_rois(
 			self.rois_tree_widget, self.roi_list,
-			self.sample_image,self.graph_plot_view.canvas
+			self.sample_image,self.graph_plot_view.canvas,
+			self.waves
 		)

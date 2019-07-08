@@ -1,5 +1,11 @@
 import random
 
+def get_waves(list_waves):
+	new_list = []
+	for item in list_waves:
+		new_list.append(float(item))
+	return new_list
+
 def get_info(SAMPLE_IMAGE):
 	info = ''
 	m = SAMPLE_IMAGE.metadata
@@ -24,7 +30,13 @@ def get_info(SAMPLE_IMAGE):
 		info = info + 'Framerate: ' +  m['framerate'] + '\n'
 	if 'reflectance scale factor'in m:
 		info = info + 'Factor de Escala de Reflectancia: ' +  m['reflectance scale factor'] + '\n'
-	return info
+	if 'byte order'in m:
+		info = info + 'Byte Order: ' +  m['byte order'] + '\n'
+	if 'header offset'in m:
+		info = info + 'Header Offset: ' +  m['header offset'] + '\n'
+	if 'wavelength'in m:
+		info = info + 'Wavelength: ' +  str(m['wavelength']) + '\n'
+	return info, int(m['reflectance scale factor']), get_waves(m['wavelength'])
 
 def band_wavelength_convert(band):
 	return band*8
@@ -44,3 +56,14 @@ def show_message(icon=QMessageBox.Warning, title="Mensaje", text="Texto", info="
 	msg.setInformativeText(info)
 	msg.setStandardButtons(QMessageBox.Ok)
 	ok = msg.exec_()
+
+def get_central_point(points):
+	x = [p[0] for p in points]
+	y = [p[1] for p in points]
+	return ((sum(x) / len(points))-2, (sum(y) / len(points))+1)
+
+def to_int(list):
+	int_list = []
+	for item in list:
+		int_list.append(int(item))
+	return int_list

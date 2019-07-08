@@ -1,4 +1,5 @@
 # Autor: Luis Quiroz Burga
+from PyQt5.QtGui import QTextCursor
 from controllers.variables import (TRUE_COLOR,)
 from controllers.sliders import (sliders_def, get_sliders_values)
 from controllers.bands import get_bands
@@ -41,6 +42,7 @@ def show_sample_info(self, metadata_info):
 	# Mostrar Información de la cabecera
 	self.text_browser_info.clear()
 	self.text_browser_info.append(metadata_info)
+	self.text_browser_info.moveCursor(QTextCursor.Start)
 
 def set_2d_canvas(self):
 	# Setear imagen de la muestra en el Canvas Matplotlib

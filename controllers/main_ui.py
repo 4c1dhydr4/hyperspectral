@@ -35,7 +35,7 @@ def load_sample(self):
 	# Cargar datos del Hipercubo
 	clean_ui(self)
 	self.sample_image = open_image(self.sample_path)
-	metadata_info = get_info(self.sample_image)
+	metadata_info, self.scale_factor, self.waves = get_info(self.sample_image)
 	show_sample_info(self, metadata_info)
 	set_sliders(self, TRUE_COLOR)
 	self.rgb_bands = TRUE_COLOR
@@ -89,14 +89,20 @@ def lasso_selector_actived(self):
 
 def roi_export(self):
 	# Callback para guardar la información en txt de las ROIS
-	save_roi_data(image=self.sample_image,roi_list=self.roi_list)
+	save_roi_data(
+		image=self.sample_image, 
+		roi_list=self.roi_list, 
+		scale_factor=self.scale_factor
+	)
 
 def graph_spectra(self):
 	ploting_rois(
 		self.rois_tree_widget, 
 		self.roi_list,
 		self.sample_image,
-		self.graph_plot_view.canvas)
+		self.graph_plot_view.canvas,
+		self.waves
+	)
 
 def add_roi_to_list(self):
 	text, okPressed = QtWidgets.QInputDialog.getText(None, 
