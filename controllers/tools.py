@@ -57,6 +57,13 @@ def show_message(icon=QMessageBox.Warning, title="Mensaje", text="Texto", info="
 	msg.setStandardButtons(QMessageBox.Ok)
 	ok = msg.exec_()
 
+def confirm_message(icon=QMessageBox.Question, title="Mensaje", text="Texto", info="Extra Info"):
+	buttonReply = QMessageBox.question(None, title, text, QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+	if buttonReply == QMessageBox.Yes:
+		return True
+	else:
+		return False
+
 def get_central_point(points):
 	x = [p[0] for p in points]
 	y = [p[1] for p in points]

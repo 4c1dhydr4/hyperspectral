@@ -17,7 +17,7 @@ from controllers.variables import (TRUE_COLOR,)
 from controllers.sliders import (set_sliders,  get_sliders_values, set_rgb_text_values)
 from controllers.bands import (get_bands,)
 from controllers.roi import (save_roi_data, plot_spectra, plane_to_matrix_inds,
-	save_roi_to_list, ploting_rois, save_and_graph_roi_mean)
+	save_roi_to_list, ploting_rois, save_and_graph_roi_mean, paint_rois,)
 
 settings.WX_GL_DEPTH_SIZE = 16
 
@@ -89,11 +89,13 @@ def lasso_selector_actived(self):
 
 def roi_export(self):
 	# Callback para guardar la información en txt de las ROIS
-	save_roi_data(
-		image=self.sample_image, 
-		roi_list=self.roi_list, 
-		scale_factor=self.scale_factor
-	)
+	threading.Thread(
+		target=save_roi_data(
+			image=self.sample_image, 
+			roi_list=self.roi_list, 
+			scale_factor=self.scale_factor
+		)
+	).start()
 
 def graph_spectra(self):
 	ploting_rois(
@@ -122,6 +124,16 @@ def load_test(self):
 	self.sample_path = 'D:\\Hypercubes\\HARC000.bil.hdr'
 	render_sample(self, test=True)
 
+def repaint_rois(self):
+	paint_rois(self.graph_2d_view, self.roi_list)
+
+def save_spectra(self):
+	path = QtWidgets.QFileDialog.getSaveFileName(None, "Guardar Gráfica", "", "Imagenes (*.png *.jpg)")
+	self.graph_plot_view.figure_2d.savefig(path[0], dpi=900)
+
+def clean_spectra(self):
+	self.graph_plot_view.clear_axes()
+
 def setupUi_definitions(self):
 	# Setear funciones a controles de interfaz 
 	self.button_open_sample.clicked.connect(self._render_sample)
@@ -142,6 +154,9 @@ def setupUi_definitions(self):
 	self.export_roi_button.clicked.connect(self._roi_export)
 	self.graph_profile_button.clicked.connect(self._graph_spectra)
 	self.add_roi_button.clicked.connect(self._add_roi_to_list)
+	self.paint_rois_button.clicked.connect(self._repaint_rois)
+	self.save_spectra_button.clicked.connect(self._save_spectra)
+	self.clean_spectra_button.clicked.connect(self._clean_spectra)
 
 def main_ui(Ui_MainWindow):
 	# Definición principal del software

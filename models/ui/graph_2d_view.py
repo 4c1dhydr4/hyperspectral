@@ -42,6 +42,18 @@ class graph_2d_view(QWidget):
 		self.canvas.axes.add_patch(self.patch)
 		self.figure_2d.canvas.draw_idle()
 
+	def paint_roi(self, roi):
+		verts = verts_normalization(roi.verts)
+		path = Path(verts)
+		tag_coords = get_central_point(verts)
+		actual_color = roi.color
+		patch = patches.PathPatch(path, 
+			facecolor=actual_color, lw=1,)
+		patch.set_alpha(0.5)
+		points = get_points(roi.shape)
+		self.canvas.axes.add_patch(patch)
+		self.figure_2d.canvas.draw_idle()
+
 	def select_lasso_area(self):
 		self.lasso_plane_list = list()
 		lasso_props = {'color':'red','linewidth':0.5,'alpha':1}
@@ -54,9 +66,12 @@ class graph_2d_view(QWidget):
 		self.canvas.axes.clear()
 		self.canvas.draw()
 
-	def show_light_sample(self, data, **kwargs):
+	def show_light_sample(self, image, rgb_bands, **kwargs):
+		rgb = image.read_band(rgb_bands)
+		# Shit happens
 		self.canvas.axes.clear()
-		self.canvas.axes.imshow(data, **kwargs)
+		self.canvas.axes.imshow(rgb, **kwargs)
+		self.canvas.axes.set_axis_off()
 		self.canvas.draw()
 		self.canvas.show()
 

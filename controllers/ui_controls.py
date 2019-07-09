@@ -48,6 +48,7 @@ def set_2d_canvas(self):
 	# Setear imagen de la muestra en el Canvas Matplotlib
 	self.graph_2d_view.clear_axes()
 	self.graph_2d_view.show_sample(self.sample_image, self.rgb_bands)
+	# self.graph_2d_view.show_light_sample(self.sample_image, self.rgb_bands)
 
 def set_up_initial_values(self):
 	# Setear valores iniciales de la interfaz

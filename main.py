@@ -100,6 +100,15 @@ class Ui_MainWindow(object):
 		self.verticalLayout_9.addWidget(self.graph_plot_view)
 		spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
 		self.verticalLayout_9.addItem(spacerItem5)
+		self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+		self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+		self.save_spectra_button = QtWidgets.QPushButton(self.centralwidget)
+		self.save_spectra_button.setObjectName("save_spectra_button")
+		self.horizontalLayout_6.addWidget(self.save_spectra_button)
+		self.clean_spectra_button = QtWidgets.QPushButton(self.centralwidget)
+		self.clean_spectra_button.setObjectName("clean_spectra_button")
+		self.horizontalLayout_6.addWidget(self.clean_spectra_button)
+		self.verticalLayout_9.addLayout(self.horizontalLayout_6)
 		self.verticalLayout_2.addLayout(self.verticalLayout_9)
 		self.gridLayout_4.addLayout(self.verticalLayout_2, 0, 2, 4, 1)
 		self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
@@ -110,6 +119,9 @@ class Ui_MainWindow(object):
 		self.export_roi_button = QtWidgets.QPushButton(self.centralwidget)
 		self.export_roi_button.setObjectName("export_roi_button")
 		self.horizontalLayout_8.addWidget(self.export_roi_button)
+		self.paint_rois_button = QtWidgets.QPushButton(self.centralwidget)
+		self.paint_rois_button.setObjectName("paint_rois_button")
+		self.horizontalLayout_8.addWidget(self.paint_rois_button)
 		self.gridLayout_4.addLayout(self.horizontalLayout_8, 1, 0, 1, 1)
 		self.graph_2d_view = graph_2d_view(self.centralwidget)
 		self.graph_2d_view.setMinimumSize(QtCore.QSize(500, 500))
@@ -283,8 +295,11 @@ class Ui_MainWindow(object):
 		self.graph_profile_button.setText(_translate("MainWindow", "Graficar Mediana ROI"))
 		self.graph_standar_des_button.setText(_translate("MainWindow", "Graficar Desviación Estándar ROI"))
 		self.label_6.setText(_translate("MainWindow", "Gráficas"))
+		self.save_spectra_button.setText(_translate("MainWindow", "Guardar Gráfica"))
+		self.clean_spectra_button.setText(_translate("MainWindow", "Limpiar Gráfica"))
 		self.add_roi_button.setText(_translate("MainWindow", "Guardar ROI"))
 		self.export_roi_button.setText(_translate("MainWindow", "Exportar ROIs"))
+		self.paint_rois_button.setText(_translate("MainWindow", "Mostrar ROIs"))
 		self.label_2.setText(_translate("MainWindow", "Rojo"))
 		self.label_4.setText(_translate("MainWindow", "Azul"))
 		self.label_3.setText(_translate("MainWindow", "Verde"))
@@ -330,6 +345,16 @@ class Ui_MainWindow(object):
 	def _add_roi_to_list(self):
 		add_roi_to_list(self)
 
+	def _repaint_rois(self):
+		repaint_rois(self)
+
+	def _save_spectra(self):
+		save_spectra(self)
+
+	def _clean_spectra(self):
+		clean_spectra(self)
+
 
 if __name__ == "__main__":
 	main_ui(Ui_MainWindow())
+

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1128</width>
+    <width>1129</width>
     <height>794</height>
    </rect>
   </property>
@@ -73,6 +73,9 @@
             <property name="text">
              <string>Información de la Imagen</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
            </widget>
           </item>
           <item>
@@ -125,6 +128,9 @@
            <widget class="QLabel" name="label_8">
             <property name="text">
              <string>Regiones de Interés</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>
@@ -214,8 +220,16 @@
        <layout class="QVBoxLayout" name="verticalLayout_9">
         <item>
          <widget class="QLabel" name="label_6">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="text">
-           <string>Gráficas</string>
+           <string>Spectra</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -248,6 +262,24 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QPushButton" name="save_spectra_button">
+            <property name="text">
+             <string>Guardar Gráfica</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clean_spectra_button">
+            <property name="text">
+             <string>Limpiar Gráfica</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
        </layout>
       </item>
      </layout>
@@ -265,6 +297,13 @@
        <widget class="QPushButton" name="export_roi_button">
         <property name="text">
          <string>Exportar ROIs</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="paint_rois_button">
+        <property name="text">
+         <string>Mostrar ROIs</string>
         </property>
        </widget>
       </item>
@@ -681,7 +720,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1128</width>
+     <width>1129</width>
      <height>21</height>
     </rect>
    </property>

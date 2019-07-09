@@ -14,7 +14,8 @@ class graph_plot_view(QWidget):
 		self.canvas = FigureCanvas(self.figure_2d)
 		vertical_layout = QVBoxLayout()
 		vertical_layout.addWidget(self.canvas)
-		self.canvas.axes = self.figure_2d.add_subplot(111)
+		# self.canvas.axes = self.figure_2d.add_subplot(111)
+		self.canvas.axes = self.figure_2d.add_axes([0.125,0.11,0.85,0.85])
 		self.setLayout(vertical_layout)
 		self.canvas.axes.clear()
 		self.canvas.axes.grid(True)
@@ -22,4 +23,5 @@ class graph_plot_view(QWidget):
 
 	def clear_axes(self):
 		self.canvas.axes.clear()
+		self.canvas.axes.grid(True)
 		self.canvas.draw()
