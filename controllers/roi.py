@@ -111,8 +111,8 @@ def plot_spectra(image, roi, canvas, waves):
 	# Plotea los datos en el Canvas
 	canvas.axes.grid(True)
 	canvas.axes.fill_between(waves, roi.max_list, roi.min_list,
-                     color=roi.color, alpha=.5)
-	canvas.axes.plot(waves, roi.mean_list, color=roi.color, label=roi.name)
+                     color=roi.color, alpha=.3)
+	canvas.axes.plot(waves, roi.mean_list, color=roi.color, label=roi.name, lw=2)
 	canvas.axes.set_xlabel('Wavelength (nm)')
 	# canvas.axes.set_ylabel('Intensidad')
 	canvas.axes.legend()
