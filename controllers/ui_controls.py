@@ -28,6 +28,7 @@ def enable_disabled_controls(self):
 
 def combo_mode_def_items(self):
 	# Seteo de Combo de Modo Bands/Wavelength
+	self.combo_mode.clear()
 	self.combo_mode.addItem("Bandas")
 	self.combo_mode.addItem("Wavelength")
 
