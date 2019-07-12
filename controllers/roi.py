@@ -126,6 +126,7 @@ def refresh_roi_to_tree(roi_list, RT):
 		R.setCheckState(0, QtCore.Qt.Checked)
 		R.setBackground(1,QtGui.QBrush(QtGui.QColor(roi.color)))
 		r = QTreeWidgetItem(R,['Bandas', str(roi.shape[2])])
+		r = QTreeWidgetItem(R,['Rango', str(roi.shape[2])])
 		r = QTreeWidgetItem(R,['Píxeles', str(len(roi.pixel_list))])
 
 def save_roi_to_list(image, name, plane_list, 
