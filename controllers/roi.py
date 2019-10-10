@@ -77,7 +77,10 @@ def plane_to_matrix_inds(plane_list, shape):
 def write_in_file(file, pixel):
 	# Escribe en el archivo
 	for data in pixel:
-		file.write(str(round(data,3)) + '\t')
+		if data == pixel[-1]:
+			file.write(str(round(data,3)))
+		else:
+			file.write(str(round(data,3)) + '\t')
 	file.write('\n')
 
 def get_y1_y2_list(pixel, max_list, min_list):
@@ -143,7 +146,10 @@ def save_roi_to_list(image, name, plane_list,
 def save_roi_file(path, roi, image, scale_factor):
 	file = open(path + '/' + roi.name + '.roi.txt','w')
 	for ind in range(1, roi.shape[2]+1):
-		file.write(str(ind) + '\t')
+		if ind == range(1, roi.shape[2]+1)[-1]:
+			file.write('B' + str(ind))
+		else:
+			file.write('B' + str(ind) + '\t')
 	file.write('\n')
 	for px in roi.pixel_list:
 		pixel = image.read_pixel(px[1],px[0])*scale_factor
