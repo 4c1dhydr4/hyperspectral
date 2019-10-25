@@ -77,10 +77,7 @@ def plane_to_matrix_inds(plane_list, shape):
 def write_in_file(file, pixel):
 	# Escribe en el archivo
 	for data in pixel:
-		if data == pixel[-1]:
-			file.write(str(round(data,3)))
-		else:
-			file.write(str(round(data,3)) + '\t')
+		file.write(str(round(data,3)) + '\t')
 	file.write('\n')
 
 def get_y1_y2_list(pixel, max_list, min_list):
@@ -117,7 +114,7 @@ def plot_spectra(image, roi, canvas, waves):
                      color=roi.color, alpha=.3)
 	canvas.axes.plot(waves, roi.mean_list, color=roi.color, label=roi.name, lw=2)
 	canvas.axes.set_xlabel('Wavelength (nm)')
-	# canvas.axes.set_ylabel('Intensidad')
+	canvas.axes.set_ylabel('Reflectancia')
 	canvas.axes.legend()
 	canvas.show()
 	canvas.draw()
@@ -146,10 +143,7 @@ def save_roi_to_list(image, name, plane_list,
 def save_roi_file(path, roi, image, scale_factor):
 	file = open(path + '/' + roi.name + '.roi.txt','w')
 	for ind in range(1, roi.shape[2]+1):
-		if ind == range(1, roi.shape[2]+1)[-1]:
-			file.write('B' + str(ind))
-		else:
-			file.write('B' + str(ind) + '\t')
+		file.write(str(ind*8) + '\t')
 	file.write('\n')
 	for px in roi.pixel_list:
 		pixel = image.read_pixel(px[1],px[0])*scale_factor
